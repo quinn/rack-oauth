@@ -268,7 +268,7 @@ module Rack #:nodoc:
     #
     # With all three of these, we can make arbitrary requests to our OAuth provider for this user.
     def session env
-      raise "Rack env['rack.session'] is nil ... has a Rack::Session middleware be enabled?  " + 
+      raise "Rack env['#{rack_session}'] is nil ... has a Rack::Session middleware be enabled?  " + 
             "use :rack_session for custom key" if env[rack_session].nil?      
       env[rack_session]['rack.oauth']       ||= {}
       env[rack_session]['rack.oauth'][name] ||= {}
