@@ -149,6 +149,8 @@ module Rack #:nodoc:
     alias site  consumer_site
     alias site= consumer_site=
 
+    attr_accessor :consumer_options
+    
     # an arbitrary name for this instance of Rack::OAuth
     def name
       @name.to_s
@@ -158,12 +160,17 @@ module Rack #:nodoc:
     def initialize app, *args
       @app = app
 
-      options = args.pop
+      options = args.pop || {}
       @name   = args.first || Rack::OAuth.default_instance_name
       
-      DEFAULT_OPTIONS.each {|name, value| send "#{name}=", value }
-      options.each         {|name, value| send "#{name}=", value } if options
-
+      options = DEFAULT_OPTIONS.merge options
+      options.each do |name, value| 
+        send "#{name}=", value
+        options.delete(name)
+      end
+      # pass whatever is left over directly to the oauth consumer
+      consumer_options = options
+      
       raise_validation_exception unless valid?
     end
 
@@ -242,7 +249,8 @@ module Rack #:nodoc:
     end
 
     def consumer
-      @consumer ||= ::OAuth::Consumer.new consumer_key, consumer_secret, :site => consumer_site
+      consumer_options[:site] = consumer_site
+      @consumer ||= ::OAuth::Consumer.new consumer_key, consumer_secret, consumer_options
     end
 
     def valid?

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["remi"]
-  s.date = %q{2009-11-02}
+  s.date = %q{2010-02-11}
   s.description = %q{Rack Middleware for OAuth Authorization}
   s.email = %q{remi@remitaylor.com}
   s.extra_rdoc_files = [
@@ -97,11 +97,8 @@ Gem::Specification.new do |s|
      "examples/sinatra-twitter.rb",
      "examples/sinatra-twitter.ru",
      "lib/rack-oauth.rb",
+     "lib/rack-oauth/railtie.rb",
      "lib/rack/oauth.rb",
-     "spec/data/authorized_access_token.yml",
-     "spec/data/authorized_oauth_verifier.yml",
-     "spec/data/authorized_request_secret.yml",
-     "spec/data/authorized_request_token.yml",
      "spec/data/unauthorized_request_token.yml",
      "spec/rack_oauth_middleware_spec.rb",
      "spec/sample_sinatra_app_spec.rb",
@@ -114,27 +111,27 @@ Gem::Specification.new do |s|
   s.summary = %q{Rack Middleware for OAuth Authorization}
   s.test_files = [
     "spec/rack_oauth_middleware_spec.rb",
-     "spec/spec_helper.rb",
      "spec/sample_sinatra_app_spec.rb",
-     "examples/sinatra-twitter.rb",
-     "examples/rails-example/spec/integration/login_spec.rb",
-     "examples/rails-example/spec/spec_helper.rb",
-     "examples/rails-example/config/boot.rb",
-     "examples/rails-example/config/routes.rb",
-     "examples/rails-example/config/environments/development.rb",
-     "examples/rails-example/config/environments/test.rb",
-     "examples/rails-example/config/environments/production.rb",
-     "examples/rails-example/config/environment.rb",
-     "examples/rails-example/config/initializers/backtrace_silencers.rb",
-     "examples/rails-example/config/initializers/inflections.rb",
-     "examples/rails-example/config/initializers/new_rails_defaults.rb",
-     "examples/rails-example/config/initializers/session_store.rb",
-     "examples/rails-example/config/initializers/mime_types.rb",
-     "examples/rails-example/db/seeds.rb",
+     "spec/spec_helper.rb",
+     "examples/rails-example/app/controllers/application_controller.rb",
+     "examples/rails-example/app/controllers/welcome_controller.rb",
      "examples/rails-example/app/helpers/application_helper.rb",
      "examples/rails-example/app/helpers/welcome_helper.rb",
-     "examples/rails-example/app/controllers/application_controller.rb",
-     "examples/rails-example/app/controllers/welcome_controller.rb"
+     "examples/rails-example/config/boot.rb",
+     "examples/rails-example/config/environment.rb",
+     "examples/rails-example/config/environments/development.rb",
+     "examples/rails-example/config/environments/production.rb",
+     "examples/rails-example/config/environments/test.rb",
+     "examples/rails-example/config/initializers/backtrace_silencers.rb",
+     "examples/rails-example/config/initializers/inflections.rb",
+     "examples/rails-example/config/initializers/mime_types.rb",
+     "examples/rails-example/config/initializers/new_rails_defaults.rb",
+     "examples/rails-example/config/initializers/session_store.rb",
+     "examples/rails-example/config/routes.rb",
+     "examples/rails-example/db/seeds.rb",
+     "examples/rails-example/spec/integration/login_spec.rb",
+     "examples/rails-example/spec/spec_helper.rb",
+     "examples/sinatra-twitter.rb"
   ]
 
   if s.respond_to? :specification_version then
