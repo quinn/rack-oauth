@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'rack'
 require 'oauth'
+require 'oauth/signature/rsa/sha1'
 
 # For some reason, getting the location our of a HeaderHash doesn't always work!
 #
