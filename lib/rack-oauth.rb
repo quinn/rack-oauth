@@ -76,32 +76,19 @@ module Rack #:nodoc:
       end
 
     end
-
-    class << self
-
-      # The name we use for Rack::OAuth instances when a name is not given.
-      #
-      # This is 'default' by default
-      attr_accessor :default_instance_name
-
-      # Set this equal to true to enable 'test mode'
-      attr_accessor :test_mode_enabled
-      def enable_test_mode()  self.test_mode_enabled =  true  end
-      def disable_test_mode() self.test_mode_enabled =  false end
-      def test_mode?()             test_mode_enabled == true  end
-    end
-
-    @default_instance_name = 'default'
-
+    
+    # the URL that Rack::OAuth should redirect to after the OAuth has been completed (part of your app)
+    attr_accessor :redirect_to, :rack_session, :consumer_key, 
+                  :consumer_secret, :consumer_site, :consumer_options, :callback_path, :login_path
+    
     # Returns all of the Rack::OAuth instances found in this Rack 'env' Hash
     def self.all env
       env['rack.oauth']
     end
-
+    
     # Simple helper to get an instance of Rack::OAuth by name found in this Rack 'env' Hash
     def self.get env, name = nil
-      name = Rack::OAuth.default_instance_name if name.nil?
-      all(env)[name.to_s]
+      all(env)['default']
     end
 
     DEFAULT_OPTIONS = {
@@ -110,54 +97,7 @@ module Rack #:nodoc:
       :redirect_to   => '/oauth_complete',
       :rack_session  => 'rack.session'
     }
-
-    # the URL that should initiate OAuth and redirect to the OAuth provider's login page
-    def login_path
-      ::File.join *[@login_path.to_s, name_unless_default].compact
-    end
-    attr_writer :login_path
-    alias login  login_path
-    alias login= login_path=
-
-    # the URL that the OAuth provider should callback to after OAuth login is complete
-    def callback_path
-      ::File.join *[@callback_path.to_s, name_unless_default].compact
-    end
-    attr_writer :callback_path
-    alias callback  callback_path
-    alias callback= callback_path=
-
-    # the URL that Rack::OAuth should redirect to after the OAuth has been completed (part of your app)
-    attr_accessor :redirect_to
-    alias redirect  redirect_to
-    alias redirect= redirect_to=
-
-    # the name of the Rack env variable used for the session
-    attr_accessor :rack_session
-
-    # [required] Your OAuth consumer key
-    attr_accessor :consumer_key
-    alias key  consumer_key
-    alias key= consumer_key=
-
-    # [required] Your OAuth consumer secret
-    attr_accessor :consumer_secret
-    alias secret  consumer_secret
-    alias secret= consumer_secret=
-
-    # [required] The site you want to request OAuth for, eg. 'http://twitter.com'
-    attr_accessor :consumer_site
-    alias site  consumer_site
-    alias site= consumer_site=
-
-    attr_accessor :consumer_options
     
-    # an arbitrary name for this instance of Rack::OAuth
-    def name
-      @name.to_s
-    end
-    attr_writer :name
-
     def initialize app, *args
       @app = app
 
@@ -165,12 +105,14 @@ module Rack #:nodoc:
       @name   = args.first || Rack::OAuth.default_instance_name
       
       options = DEFAULT_OPTIONS.merge options
-      options.each do |name, value| 
-        send "#{name}=", value
-        options.delete(name)
+      options.each do |name, value|
+        if respond_to? name
+          send "#{name}=", value
+          options.delete(name)
+        end
       end
       # pass whatever is left over directly to the oauth consumer
-      consumer_options = options
+      self.consumer_options = options
       
       raise_validation_exception unless valid?
     end
@@ -201,11 +143,6 @@ module Rack #:nodoc:
     end
 
     def do_login env
-      if Rack::OAuth.test_mode?
-        set_access_token env, OpenStruct.new(:params => { 'I am a' => 'fake token' })
-        return [ 302, { 'Content-Type' => 'text/html', 'Location' => redirect_to }, [] ]
-      end
-
       # get request token and hold onto the token/secret (which we need later to get the access token)
       request = consumer.get_request_token :oauth_callback => ::File.join("http://#{ env['HTTP_HOST'] }", callback_path)
       session(env)[:token]  = request.token
@@ -282,12 +219,6 @@ module Rack #:nodoc:
       env[rack_session]['rack.oauth']       ||= {}
       env[rack_session]['rack.oauth'][name] ||= {}
     end
-
-    # Returns the #name of this Rack::OAuth unless the name is 'default', in which case it returns nil
-    def name_unless_default
-      name == Rack::OAuth.default_instance_name ? nil : name
-    end
-
   end
 
 end
