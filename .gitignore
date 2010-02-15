@@ -1,3 +1,7 @@
 *.swp
 *.gem
 test.rb
+oauth.yml
+examples/rails-example/log/*
+.bundle
+Gemfile.lock
